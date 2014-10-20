@@ -17,6 +17,8 @@ defmodule Vanilla.Mixfile do
       applications: ~w(
         logger
         ranch
+        postgrex
+        ecto
       )a
     ]
   end
@@ -32,7 +34,9 @@ defmodule Vanilla.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      ranch: "~> 1.0.0",
+      ranch:    "~> 1.0.0",
+      ecto:     "~> 0.2.5",
+      postgrex: "~> 0.6.0",
     ]
   end
 end

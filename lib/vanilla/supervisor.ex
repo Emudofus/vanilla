@@ -8,6 +8,7 @@ defmodule Vanilla.Supervisor do
   def init(:ok) do
     children = [
       worker(Vanilla.Frontend.Ranch, []),
+      worker(Vanilla.Repo, []),
     ]
 
     supervise children,

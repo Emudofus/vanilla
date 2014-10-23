@@ -3,9 +3,15 @@ defmodule Vanilla.Frontend.Ranch do
 
   alias Vanilla.Frontend.Tokenizer
   alias Vanilla.Frontend.Parser
+  alias Vanilla.Model.User
 
   defmodule Conn do
-    defstruct socket: nil, transport: nil, state: 0, closed: false
+    defstruct socket:    nil,
+              transport: nil,
+              state:     0,
+              closed:    false,
+              user:      nil,
+              ticket:    ""
 
     def send(conn = %Conn{socket: socket, transport: transport}, parts) when is_list(parts) do
       unless conn.closed do
@@ -60,14 +66,14 @@ defmodule Vanilla.Frontend.Ranch do
   @doc false
   def init(ref, socket, transport, _opts) do
     :ok = :ranch.accept_ack(ref)
-    conn = %Conn{socket: socket, transport: transport}
+    conn = %Conn{socket: socket, transport: transport, ticket: gen_ticket()}
     Logger.debug "OPN"
-    conn |> Conn.send "HC#{gen_ticket}"
+    conn |> Conn.send "HC#{conn.ticket}"
     loop(conn)
   end
 
   defp gen_ticket do
-    :base64.encode(:crypto.rand_bytes(22))
+    User.rand_ticket
   end
 
   defp loop(conn) do

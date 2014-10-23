@@ -4,6 +4,7 @@ defmodule Vanilla.Frontend.Ranch do
   alias Vanilla.Frontend.Tokenizer
   alias Vanilla.Frontend.Parser
   alias Vanilla.Model.User
+  alias Vanilla.Crypto
 
   defmodule Conn do
     defstruct socket:    nil,
@@ -66,14 +67,10 @@ defmodule Vanilla.Frontend.Ranch do
   @doc false
   def init(ref, socket, transport, _opts) do
     :ok = :ranch.accept_ack(ref)
-    conn = %Conn{socket: socket, transport: transport, ticket: gen_ticket()}
+    conn = %Conn{socket: socket, transport: transport, ticket: Crypto.rand_ticket}
     Logger.debug "OPN"
     conn |> Conn.send "HC#{conn.ticket}"
     loop(conn)
-  end
-
-  defp gen_ticket do
-    User.rand_ticket
   end
 
   defp loop(conn) do
